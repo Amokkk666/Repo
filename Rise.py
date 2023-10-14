@@ -1,1 +1,1 @@
-print(Rise and Shine)
+print("Rise and Shine")
