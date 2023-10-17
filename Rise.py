@@ -2,8 +2,8 @@ name_first = input ("What is your first name? ")
 name_last = input ("What is your last name? ")
 print (name_last + " " + name_first)
 
-first_number = input("Please write first number")
-second_number = input("Please write second number")
+first_number = input("Please write first number ")
+second_number = input("Please write second number ")
 print (int(first_number) + int(second_number))
 
 
