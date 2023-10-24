@@ -23,4 +23,11 @@ elif grade >=60 and grade<70:
     print("D")
 else:
     print("F")
-    
+
+
+year_leap = input ("Type the year: ")
+year = int(year_leap)
+if year%400==0 or year%100!=0 and year%4==0:
+    print (year, "is a leap year")
+else:
+    print(year, "is not a leap year")
