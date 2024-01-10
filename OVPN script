@@ -1,0 +1,34 @@
+import subprocess
+
+def update_ovpn_file(ovpn_file, crt_file, key_file):
+  """Updates an existing .ovpn file with a .crt and .key file without overwriting existing information.
+
+  Args:
+    ovpn_file: The path to the .ovpn file to update.
+    crt_file: The path to the .crt file.
+    key_file: The path to the .key file.
+  """
+
+  # Create a temporary file to store the updated .ovpn file.
+  temp_ovpn_file = "/tmp/updated.ovpn"
+
+  # Copy the contents of the existing .ovpn file to the temporary file.
+  subprocess.run(["cp", ovpn_file, temp_ovpn_file])
+
+  # Update the temporary file with the .crt and .key files.
+  subprocess.run(["sed", "-i", "/<ca>/r", crt_file, temp_ovpn_file])
+  subprocess.run(["sed", "-i", "/<cert>/r", key_file, temp_ovpn_file])
+
+  # Move the temporary file to the original .ovpn file location.
+  subprocess.run(["mv", temp_ovpn_file, ovpn_file])
+
+if __name__ == "__main__":
+  # Get the paths to the .crt and .key files.
+  crt_file = "/path/to/crt.file"
+  key_file = "/path/to/key.file"
+
+  # Get the path to the .ovpn file.
+  ovpn_file = "/path/to/ovpn.file"
+
+  # Update the .ovpn file.
+  update_ovpn_file(ovpn_file, crt_file, key_file)
