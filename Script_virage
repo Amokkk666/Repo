@@ -1,0 +1,68 @@
+#!/bin/bash
+# Set the path to the ADB executable
+adb_path="/usr/bin/adb"
+apk_files=(
+    "/home/amokk/Downloads/APK/OpenVPN.apk"
+    "/home/amokk/Downloads/APK/app-1_2_11.apk"
+)
+# Path to the .txt file
+txt_files=(
+"/home/amokk/Downloads/Cert/T0910_12_61/1.txt"
+"/home/amokk/Downloads/Cert/T0910_12_61/client.ovpn"
+)
+
+# Function to remove text files
+remove_text_files() {
+    for txt_file in "${txt_files[@]}"; do
+        $adb_path shell rm "/sdcard/Download/$(basename $txt_file)"
+        echo "File removed from Download folder on the device: $txt_file"
+    done
+}
+# Iterate through the array and install each APK using ADB
+for apk_path in "${apk_files[@]}"; do
+    # Before the adb install command
+    echo "Installing APK: $apk_path"
+# Install the APK using ADB
+    $adb_path install -r "$apk_path"
+# Check the exit status of the installation
+    if [ $? -eq 0 ]; then
+        echo "APK installation successful: $apk_path"
+    else
+        echo "Error: APK installation failed: $apk_path"
+    fi
+done
+# Copy the  files to the device
+for txt_file in "${txt_files[@]}"; do
+    # Copy the .txt file to the device's /sdcard/ directory
+    $adb_path push "$txt_file" "/sdcard/"
+# Move the .txt file from /sdcard/ to /emulated/0/Download/
+    $adb_path shell mv "/sdcard/$(basename $txt_file)" "/sdcard/Download/"
+
+# Print a message indicating the file has been moved
+    echo "Files moved to Download folder on the device: $txt_file"
+done
+
+# Wait for user input (pressing Enter) before proceeding
+read -p "Press Enter to remove the files from the device..."
+
+# Remove the text files
+remove_text_files
+
+# Get the list of connected devices
+devices_output=$("$adb_path" devices)
+
+
+# Iterate through connected devices and get their IP addresses
+while IFS= read -r device_line; do
+    # Extract the device serial number from the device line
+    device_serial=$(echo "$device_line" | awk '{print $1}')
+
+    # Get the IP address using adb shell ifconfig
+    ip_address_output=$("$adb_path" -s "$device_serial" shell ifconfig)
+
+    # Print the device serial number and its IP address
+    echo "Device: $device_serial"
+    echo "IP Address:"
+    echo "$ip_address_output"
+    echo
+done <<< "$devices_output"

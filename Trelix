@@ -1,0 +1,19 @@
+#!/bin/bash
+# Set the path to the ADB executable
+adb_path="/usr/bin/adb"
+apk_files=(
+    "/home/amokk/Downloads/APK/Trellix Mobile Security.apk"
+    )
+# Iterate through the array and install each APK using ADB
+for apk_path in "${apk_files[@]}"; do
+    # Before the adb install command
+    echo "Installing APK: $apk_path"
+# Install the APK using ADB
+    $adb_path install -r "$apk_path"
+# Check the exit status of the installation
+    if [ $? -eq 0 ]; then
+        echo "APK installation successful: $apk_path"
+    else
+        echo "Error: APK installation failed: $apk_path"
+    fi
+done
